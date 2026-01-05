@@ -57,9 +57,20 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+from fastapi.middleware.cors import CORSMiddleware
+
 # Подключаем роутеры
 app.include_router(auth.router, prefix="/api") 
 app.include_router(music.router, prefix="/api")
+
+# Настройка CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Разрешаем все домены (важно для Telegram Mini App)
+    allow_credentials=True,
+    allow_methods=["*"],  # Разрешаем все HTTP методы (GET, POST и т.д.)
+    allow_headers=["*"],  # Разрешаем все заголовки
+)
 
 @app.get("/", tags=["System"])
 async def root():
@@ -76,4 +87,13 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    from app.core.config import settings
+    
+    uvicorn.run(
+        "app.main:app", 
+        host=settings.app_host, 
+        port=settings.app_port, 
+        reload=settings.debug,
+        ssl_keyfile=settings.ssl_keyfile,
+        ssl_certfile=settings.ssl_certfile
+    )

@@ -17,8 +17,13 @@ class Settings(BaseSettings):
     app_port: int = 8000
     debug: bool = False
 
+    # SSL
+    ssl_keyfile: str = None
+    ssl_certfile: str = None
+
     class Config:
         env_file = ".env"
         case_sensitive = False
+        extra = "ignore"
 
 settings = Settings()
