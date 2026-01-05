@@ -42,13 +42,14 @@ class VKService:
         tracks = []
         
         for item in items:
-            # Пропускаем треки без URL (заблокированные)
-            if not item.get('url'):
-                continue
+            # Не пропускаем треки без URL в поиске, так как мы получим его в /download
+            # if not item.get('url'):
+            #    continue
 
             # Извлекаем обложку
             cover_url = None
-            thumb = item.get('album', {}).get('thumb', {})
+            album = item.get('album', {})
+            thumb = album.get('thumb', {}) if album else {}
             if thumb:
                 cover_url = thumb.get('photo_600') or thumb.get('photo_300') or thumb.get('photo_68')
 
@@ -60,9 +61,10 @@ class VKService:
                 "artist": item.get('artist'),
                 "duration": item.get('duration'),
                 "cover_url": cover_url,
-                "url_api": f"/api/music/download/{track_id}" # Обратите внимание на новый префикс API
+                "url_api": f"/api/music/download/{track_id}"
             })
             
+        print(f"✅ Found {len(tracks)} tracks for query: {query}")
         return tracks
 
     async def get_audio_url(self, track_id: str):
