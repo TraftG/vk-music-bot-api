@@ -32,7 +32,7 @@ async def download(
     This avoids downloading the file to the local server and fixes HLS segment errors.
     """
     # Валидация track_id (должен быть в формате owner_id_audio_id)
-    if not re.match(r'^-?\d+_\d+', track_id):
+    if not re.match(r'^-?\d+_\d+$', track_id):
         # Игнорируем запросы сегментов .ts или левые ID
         raise HTTPException(status_code=400, detail="Invalid track ID format")
 
